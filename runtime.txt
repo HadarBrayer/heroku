@@ -1,2 +1,1 @@
-# sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
-# python 3.7.2
+python 3.7.2
