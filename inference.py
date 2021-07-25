@@ -2,8 +2,10 @@ import pickle
 import pandas as pd
 import numpy as np
 from flask import Flask, request
+import flask
 import time
 import os
+import json
 
 start_time = time.time()
 # Read the model with Pickle from churn_model.pkl
@@ -16,17 +18,34 @@ app = Flask(__name__)
 def say_hi():
     return "hi"
 
-#http://127.0.0.1:5000/predict_churn?is_male=0&num_inters=0&late_on_payment=1&age=33&years_in_contract=4.36
-# @app.route('/predict_churn')
-# def predict_churn():
-#     is_male = request.args.get("is_male")
-#     num_inters = request.args.get("num_inters")
-#     late_on_payment = request.args.get("late_on_payment")
-#     age = request.args.get("age")
-#     years_in_contract = request.args.get("years_in_contract")
-#     data = np.array([is_male, num_inters, late_on_payment, age, years_in_contract])
-#     pred = loaded_model.predict(data.reshape(1, 5))
-#     return str(pred[0])
+http://127.0.0.1:5000/predict_churn?is_male=0&num_inters=0&late_on_payment=1&age=33&years_in_contract=4.36
+@app.route('/predict_churn')
+def predict_churn():
+    if globals()['loaded_model']:
+        pass
+    else:
+        loaded_model = pickle.load(open(filename, 'rb'))
+     is_male = request.args.get("is_male")
+     num_inters = request.args.get("num_inters")
+     late_on_payment = request.args.get("late_on_payment")
+     age = request.args.get("age")
+     years_in_contract = request.args.get("years_in_contract")
+     data = np.array([is_male, num_inters, late_on_payment, age, years_in_contract])
+     pred = loaded_model.predict(data.reshape(1, 5))
+     return str(pred[0])
+
+
+@app.route('/predict_churn_bulk', methods=['POST'])
+def predict_churn_bulk():
+    if globals()['loaded_model']:
+        pass
+    else:
+        loaded_model = pickle.load(open(filename, 'rb'))
+    bulk_data = json.loads(flask.request.get_json())
+    X_test_bulk = pd.DataFrame(bulk_data)
+    prediction = loaded_model.predict(X_test_bulk)
+    X_test_bulk['prediction'] = prediction
+    return flask.jsonify(X_test_bulk.to_dict(orient='records'))
 
 
 
