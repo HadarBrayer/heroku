@@ -46,6 +46,14 @@ def predict_churn_bulk():
     X_test_bulk['prediction'] = prediction
     return flask.jsonify(X_test_bulk.to_dict(orient='records'))
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT')))
-    #app.run(host='127.0.0.1', port=5000)
+if __name__ == '__main__':
+    # Heroku provides environment variable 'PORT' that should be listened on by Flask
+    port = os.environ.get('PORT')
+
+    if port:
+        # 'PORT' variable exists - running on Heroku, listen on external IP and on given by Heroku port
+        app.run(host='0.0.0.0', port=int(port))
+    else:
+        # 'PORT' variable doesn't exist, running not on Heroku, presumabely running locally, run with default
+        #   values for Flask (listening only on localhost on default Flask port)
+        app.run()
