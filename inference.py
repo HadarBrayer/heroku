@@ -16,9 +16,6 @@ app = Flask(__name__)
 filename = 'churn_model.pkl'
 loaded_model = pickle.load(open(filename, 'rb'))
 
-@app.route("/")
-def hello():
-    return "<p>hello "hashaka"</p>"
 
 # http://127.0.0.1:5000/predict_churn?is_male=0&num_inters=0&late_on_payment=1&age=33&years_in_contract=4.36
 @app.route('/predict_churn', methods=['GET'])
